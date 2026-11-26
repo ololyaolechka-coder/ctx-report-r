@@ -32,9 +32,11 @@ jobs:
       - name: Доступы из секретов
         env:
           YANDEX_TOKEN: ${{ secrets.YANDEX_TOKEN }}
+          DIRECT_TOKEN: ${{ secrets.DIRECT_TOKEN }}
         run: |
-          test -n "$YANDEX_TOKEN" || { echo "Не задан секрет YANDEX_TOKEN"; exit 1; }
-          python -c "import json,os;t=os.environ['YANDEX_TOKEN'].strip();json.dump({'direct':t,'metrika':t},open('config.json','w'))"
+          test -n "$YANDEX_TOKEN" || { echo "Не задан секрет YANDEX_TOKEN (Метрика)"; exit 1; }
+          test -n "$DIRECT_TOKEN" || { echo "Не задан секрет DIRECT_TOKEN (Директ)"; exit 1; }
+          python -c "import json,os;json.dump({'direct':os.environ['DIRECT_TOKEN'].strip(),'metrika':os.environ['YANDEX_TOKEN'].strip()},open('config.json','w'))"
 
       - name: Сбор отчёта
         run: python update.py
